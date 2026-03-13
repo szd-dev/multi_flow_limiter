@@ -294,50 +294,6 @@ go test -v -run TestElasticMultiLimiter_ManualPlayground -count=1
 - **Concurrency**: Mutex-protected, safe for concurrent use
 - **Memory**: Minimal overhead, only stores bucket state and timestamps
 
-## Design Decisions
-
-### Why Lazy Refill?
-
-Lazy refill (calculating tokens on `Allow()` call) reduces CPU overhead compared to periodic background refill. This is especially efficient for:
-- Low-frequency traffic patterns
-- Burst-heavy workloads
-- Systems with many idle buckets
-
-### Why Same Capacity for All Buckets?
-
-Using a shared capacity for all buckets enables:
-- Elastic capacity sharing between buckets
-- Simpler mental model (total capacity = totalQPS * burstSeconds)
-- Better resource utilization (no wasted capacity in low-priority buckets)
-
-### Why Panic on Invalid Config?
-
-The limiter panics on invalid configuration because:
-- Configuration errors are programmer mistakes, not runtime conditions
-- Failing fast prevents silent misconfiguration in production
-- Rate limiter misconfiguration can have severe system-wide impacts
-
-## Benchmarks
-
-Run benchmarks to measure performance:
-
-```bash
-go test -bench=. -benchmem
-```
-
-## Contributing
-
-Contributions are welcome! Please follow these guidelines:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Write tests for new functionality
-4. Ensure all tests pass (`go test -v`)
-5. Maintain test coverage above 95%
-6. Commit changes (`git commit -m 'Add amazing feature'`)
-7. Push to the branch (`git push origin feature/amazing-feature`)
-8. Open a Pull Request
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -347,14 +303,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Inspired by the token bucket algorithm and priority queue concepts
 - Built with Go's excellent standard library and testing tools
 - Uses [goconvey](https://github.com/smartystreets/goconvey) for BDD-style testing
-
-## Status
-
-This project is actively maintained. For production use:
-- ✅ Comprehensive test coverage (98.6%)
-- ✅ Thread-safe implementation
-- ✅ Well-documented API
-- ✅ Zero external runtime dependencies
 
 ---
 
